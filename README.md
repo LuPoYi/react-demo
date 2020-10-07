@@ -1,28 +1,30 @@
 # React Demo
 
-> All the code is from "Clever Programmer", I just watch their video and do step by step and push the code here.
+> All the codes are from online course, I watched their videos and do them step by step and pushed here.
 
-## slack clone
+## Slack clone - Clever Programmer
 
-* https://slack-clone-99828.web.app/
-  
+- https://slack-clone-99828.web.app/
+
 <img src="screenshot/slack-clone.png" width="500" />
 
+## Twitter clone - Clever Programmer
 
-## twitter clone
+- https://twitter-clone-33e08.web.app/
 
-* https://twitter-clone-33e08.web.app/
-  
 <img src="screenshot/twitter-clone.png" width="500" />
 
-## tinder clone 
+## Tinder clone - Clever Programmer
 
-* https://tinder-clone-c29a2.web.app/
+- https://tinder-clone-c29a2.web.app/
 
 <img src="screenshot/tinder-clone-1.png" width="300" />
 
 <img src="screenshot/tinder-clone-2.png" width="300" />
 
+## CodePen clone - Web Dev Simplified
+
+<img src="screenshot/codepen-clone.png" width="300" />
 
 ### Reference
 
@@ -31,3 +33,5 @@ Clever Programmer
 https://www.youtube.com/channel/UCqrILQNl5Ed9Dz6CGMyvMTQ
 
 https://github.com/CleverProgrammers/
+
+https://www.youtube.com/watch?v=wcVxX7lu2d4
