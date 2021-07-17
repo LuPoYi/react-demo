@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useCollection } from 'react-firebase-hooks/firestore'
 import { Avatar, IconButton } from '@material-ui/core'
 import { useRouter } from 'next/router'
@@ -9,37 +10,96 @@ import AttachFileIcon from '@material-ui/icons/AttachFile'
 import MicIcon from '@material-ui/icons/Mic'
 import Message from './Message'
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon'
+import firebase from 'firebase'
+import getRecipientEmail from '../utils/getRecipientEmail'
+import TimeAgo from 'timeago-react'
+import { useRef } from 'react'
 
 const ChatScreen = ({ chat, messages }) => {
   const [user] = useAuthState(auth)
+  const [input, setInput] = useState('')
+  const endOfMessageRef = useRef(null)
   const router = useRouter()
   const [messageSnapshot] = useCollection(
-    db.collection('chats').doc(router.query.id).collection('message').orderBy('timestamp', 'asc')
+    db.collection('chats').doc(router.query.id).collection('messages').orderBy('timestamp', 'asc')
+  )
+
+  const [recipientSnapshot] = useCollection(
+    db.collection('users').where('email', '==', getRecipientEmail(chat.users, user))
   )
 
   const showMessage = () => {
     if (messageSnapshot) {
+      console.log('aaaaaa', 'clientside')
       return messageSnapshot.docs.map((message) => (
         <Message
           key={message.id}
-          user={messsage.data().user}
+          user={message.data().user}
           message={{
             ...message.data(),
             timestamp: message.data().timestamp?.toDate().getTime(),
           }}
         />
       ))
+    } else {
+      console.log('aaaaaa', 'serverside')
+      return JSON.parse(messages).map((message) => (
+        <Message key={message.id} user={message.user} message={message} />
+      ))
     }
   }
+
+  const scrollToBottom = () => {
+    endOfMessageRef.current.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    })
+  }
+
+  const sendMessage = (e) => {
+    e.preventDefault()
+
+    // Update the last seen...
+    db.collection('users').doc(user.uid).set(
+      {
+        lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
+
+    db.collection('chats').doc(router.query.id).collection('messages').add({
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      message: input,
+      user: user.email,
+      photoURL: user.photoURL,
+    })
+
+    setInput('')
+    scrollToBottom()
+  }
+
+  const recipient = recipientSnapshot?.docs?.[0]?.data()
+  const recipientEmail = getRecipientEmail(chat.users, user)
 
   return (
     <Container>
       <Header>
-        <Avatar />
+        {recipient ? <Avatar src={recipient?.photoURL} /> : <Avatar>{recipientEmail[0]}</Avatar>}
 
         <HeaderInfomation>
-          <h3>Rec Email</h3>
-          <p>Last seen ...</p>
+          <h3>{recipientEmail}</h3>
+          {recipientSnapshot ? (
+            <p>
+              Last active:{' '}
+              {recipient?.lastSeen?.toDate() ? (
+                <TimeAgo datetime={recipient?.lastSeen?.toDate()} />
+              ) : (
+                'unavailable'
+              )}
+            </p>
+          ) : (
+            <p>Loading Last active...</p>
+          )}
         </HeaderInfomation>
 
         <HeaderIcons>
@@ -54,12 +114,15 @@ const ChatScreen = ({ chat, messages }) => {
 
       <MessageContainer>
         {showMessage()}
-        <EndOfMessage />
+        <EndOfMessage ref={endOfMessageRef} />
       </MessageContainer>
 
       <InputContainer>
         <InsertEmoticonIcon />
-        <Input />
+        <Input value={input} onChange={(e) => setInput(e.target.value)} />
+        <button hidden disalbed={!input} type="submit" onClick={sendMessage}>
+          Send Message
+        </button>
         <MicIcon />
       </InputContainer>
     </Container>
@@ -103,7 +166,9 @@ const MessageContainer = styled.div`
   min-height: 90vh;
 `
 
-const EndOfMessage = styled.div``
+const EndOfMessage = styled.div`
+  margin-bottom: 50px;
+`
 
 const InputContainer = styled.form`
   display: flex;
