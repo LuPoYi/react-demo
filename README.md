@@ -26,6 +26,12 @@
 
 <img src="screenshot/codepen-clone.png" width="300" />
 
+## Whatsapp Next.js clone - Sonny Sangha
+
+- https://whatsapp-v2-beta-woad.vercel.app/
+
+<img src="screenshot/whatsapp-clone.png" width="300" />
+
 ### Reference
 
 Clever Programmer
@@ -35,3 +41,7 @@ https://www.youtube.com/channel/UCqrILQNl5Ed9Dz6CGMyvMTQ
 https://github.com/CleverProgrammers/
 
 https://www.youtube.com/watch?v=wcVxX7lu2d4
+
+Sonny Sangha
+
+https://www.youtube.com/watch?v=svlEVg0To_c
